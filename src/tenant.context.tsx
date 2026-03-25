@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- context files intentionally mix a provider component with hooks */
 import React, { createContext, useContext } from 'react'
 import type { TenantConfig } from './tenant.types'
 
