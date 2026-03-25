@@ -20,6 +20,6 @@
       "@tenants/*": ["./tenants/*"]
     }
   },
-  "include": ["src", "tenants", "vite.config.ts"],
+  "include": ["src", "tenants"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

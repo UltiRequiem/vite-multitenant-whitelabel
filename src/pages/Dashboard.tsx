@@ -4,11 +4,11 @@ import TicketTable from '../components/TicketTable'
 import { useTenant, useTenantFeatures } from '../tenant.context'
 
 const MOCK_TICKETS = [
-  { id: 'TF-001', title: 'Login button unresponsive on mobile', status: 'open', assignee: 'Ana García', priority: 'High' },
-  { id: 'TF-002', title: 'CSV export missing last column', status: 'pending', assignee: 'John Smith', priority: 'Medium' },
-  { id: 'TF-003', title: 'Dashboard loads slowly on first visit', status: 'closed', assignee: 'Mei Chen', priority: 'Low' },
-  { id: 'TF-004', title: 'Email notifications not sending', status: 'open', assignee: 'Carlos Ruiz', priority: 'High' },
-  { id: 'TF-005', title: 'Filter state lost on page refresh', status: 'pending', assignee: 'Ana García', priority: 'Medium' },
+  { id: 'TF-001', title: 'Login button unresponsive on mobile', status: 'open' as const, assignee: 'Ana García', priority: 'High' },
+  { id: 'TF-002', title: 'CSV export missing last column', status: 'pending' as const, assignee: 'John Smith', priority: 'Medium' },
+  { id: 'TF-003', title: 'Dashboard loads slowly on first visit', status: 'closed' as const, assignee: 'Mei Chen', priority: 'Low' },
+  { id: 'TF-004', title: 'Email notifications not sending', status: 'open' as const, assignee: 'Carlos Ruiz', priority: 'High' },
+  { id: 'TF-005', title: 'Filter state lost on page refresh', status: 'pending' as const, assignee: 'Ana García', priority: 'Medium' },
 ]
 
 function StatPanel({ label, value, sub }: { label: string; value: string; sub: string }) {

@@ -50,7 +50,7 @@ jobs:
             deploy_target: GLOBEX # Maps to secret: DEPLOY_URL_GLOBEX
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v4
         with:
