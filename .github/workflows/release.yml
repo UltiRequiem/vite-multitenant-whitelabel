@@ -3,10 +3,10 @@ name: Release
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 permissions:
-  contents: write   # Required to create GitHub Releases
+  contents: write # Required to create GitHub Releases
 
 jobs:
   # ── Type-check and lint ────────────────────────────────────────────────────
@@ -14,9 +14,9 @@ jobs:
     name: Type-check & lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: npm
@@ -41,9 +41,9 @@ jobs:
         tenant: [default, acme, globex]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: npm
