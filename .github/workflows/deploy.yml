@@ -1,0 +1,119 @@
+name: Build and deploy all tenants
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── Type-check and lint (runs once, shared across all tenants) ─────────────
+  quality:
+    name: Type-check & lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type-check
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+  # ── Build each tenant in parallel ─────────────────────────────────────────
+  build:
+    name: Build — ${{ matrix.tenant }}
+    runs-on: ubuntu-latest
+    needs: quality           # Only build if quality checks pass
+
+    strategy:
+      fail-fast: false       # Don't cancel other tenants if one fails
+      matrix:
+        include:
+          - tenant: default
+            environment: production
+            deploy_target: DEFAULT   # Maps to secret: DEPLOY_URL_DEFAULT
+
+          - tenant: acme
+            environment: production
+            deploy_target: ACME      # Maps to secret: DEPLOY_URL_ACME
+
+          - tenant: globex
+            environment: production
+            deploy_target: GLOBEX    # Maps to secret: DEPLOY_URL_GLOBEX
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build tenant — ${{ matrix.tenant }}
+        run: npm run build
+        env:
+          VITE_TENANT: ${{ matrix.tenant }}
+          # Pass any tenant-specific secrets as env vars here
+          # e.g. VITE_SENTRY_DSN: ${{ secrets.SENTRY_DSN_ACME }}
+
+      # Upload the build artifact so it can be inspected or
+      # downloaded from the Actions UI without needing to deploy
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.tenant }}
+          path: dist/${{ matrix.tenant }}
+          retention-days: 7
+
+      # ── Deploy step ───────────────────────────────────────────────────────
+      # This example uses a generic deploy-to-pages action.
+      # Replace this step with your actual deploy target:
+      #
+      #   AWS S3:
+      #     aws s3 sync dist/${{ matrix.tenant }}/ s3://your-bucket-${{ matrix.tenant }}/
+      #
+      #   Cloudflare Pages:
+      #     uses: cloudflare/pages-action@v1
+      #     with: { projectName: ticketflow-${{ matrix.tenant }}, directory: dist/${{ matrix.tenant }} }
+      #
+      #   Nginx / rsync:
+      #     rsync -avz dist/${{ matrix.tenant }}/ user@host:/var/www/${{ matrix.tenant }}/
+      #
+      #   Docker:
+      #     docker build --build-arg TENANT=${{ matrix.tenant }} -t ticketflow-${{ matrix.tenant }} .
+      #     docker push your-registry/ticketflow-${{ matrix.tenant }}
+
+      - name: Deploy ${{ matrix.tenant }}
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          echo "Deploying tenant: ${{ matrix.tenant }}"
+          echo "Build output is at: dist/${{ matrix.tenant }}"
+          echo "Replace this step with your actual deploy command."
+        # env:
+        #   DEPLOY_URL: ${{ secrets[format('DEPLOY_URL_{0}', matrix.deploy_target)] }}
+
+  # ── Summary job — useful for branch protection rules ──────────────────────
+  all-tenants-built:
+    name: All tenants built
+    runs-on: ubuntu-latest
+    needs: build
+    if: always()
+    steps:
+      - name: Check all builds succeeded
+        run: |
+          if [[ "${{ needs.build.result }}" == "success" ]]; then
+            echo "All tenant builds passed."
+          else
+            echo "One or more tenant builds failed."
+            exit 1
+          fi

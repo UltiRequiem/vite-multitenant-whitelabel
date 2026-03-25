@@ -1,0 +1,37 @@
+{
+  "name": "ticketflow-whitelabel",
+  "version": "1.0.0",
+  "description": "Multi-tenant white-label ticketing system built with React + Vite",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:acme": "VITE_TENANT=acme vite",
+    "dev:globex": "VITE_TENANT=globex vite",
+    "build": "tsc && vite build",
+    "build:acme": "VITE_TENANT=acme tsc && VITE_TENANT=acme vite build",
+    "build:globex": "VITE_TENANT=globex tsc && VITE_TENANT=globex vite build",
+    "build:all": "npm run build && npm run build:acme && npm run build:globex",
+    "preview": "vite preview",
+    "preview:acme": "vite preview --outDir dist/acme",
+    "preview:globex": "vite preview --outDir dist/globex",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.4"
+  }
+}
